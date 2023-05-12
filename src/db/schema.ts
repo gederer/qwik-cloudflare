@@ -36,7 +36,7 @@ export const userSession = pgTable(
   }
 );
 
-export const category = pgTable(
+export const category: any = pgTable(
   "Category",
   {
     id: uuid("id").primaryKey(),
