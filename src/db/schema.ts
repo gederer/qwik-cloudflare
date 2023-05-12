@@ -1,6 +1,6 @@
 import {
   pgTable,
-  varchar,
+  // varchar,
   timestamp,
   text,
   integer,
@@ -9,12 +9,13 @@ import {
   doublePrecision,
   boolean,
   index,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const userSession = pgTable(
   "UserSession",
   {
-    id: text("id").notNull(),
+    id: uuid("id").primaryKey(),
     createdAt: timestamp("createdAt", { precision: 3, mode: "string" })
       .defaultNow()
       .notNull(),
@@ -23,7 +24,7 @@ export const userSession = pgTable(
       mode: "string",
     }).notNull(),
     token: text("token").notNull(),
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" }),
   },
@@ -38,7 +39,7 @@ export const userSession = pgTable(
 export const category = pgTable(
   "Category",
   {
-    id: text("id").notNull(),
+    id: uuid("id").primaryKey(),
     createdAt: timestamp("createdAt", { precision: 3, mode: "string" })
       .defaultNow()
       .notNull(),
@@ -47,7 +48,7 @@ export const category = pgTable(
       mode: "string",
     }).notNull(),
     name: text("name").notNull(),
-    categoryId: text("categoryId"),
+    categoryId: uuid('category_id').references(() => category.id),
   },
   (table) => {
     return {
@@ -65,7 +66,7 @@ export const category = pgTable(
 export const role = pgTable(
   "Role",
   {
-    id: text("id").notNull(),
+    id: uuid("id").primaryKey(),
     name: text("name").notNull(),
   },
   (table) => {
@@ -76,12 +77,12 @@ export const role = pgTable(
 );
 
 export const product = pgTable("Product", {
-  id: text("id").notNull(),
+  id: uuid("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   price: doublePrecision("price").notNull(),
   staffPick: boolean("staffPick").notNull(),
-  categoryId: text("categoryId")
+  categoryId: uuid("categoryId")
     .notNull()
     .references(() => category.id, {
       onDelete: "restrict",
@@ -96,10 +97,10 @@ export const product = pgTable("Product", {
 export const roleToUser = pgTable(
   "_RoleToUser",
   {
-    a: text("A")
+    a: uuid("A")
       .notNull()
       .references(() => role.id, { onDelete: "cascade", onUpdate: "cascade" }),
-    b: text("B")
+    b: uuid("B")
       .notNull()
       .references(() => user.id, { onDelete: "cascade", onUpdate: "cascade" }),
   },
@@ -112,7 +113,7 @@ export const roleToUser = pgTable(
 );
 
 export const image = pgTable("Image", {
-  id: text("id").notNull(),
+  id: uuid("id").primaryKey(),
   secret: text("secret"),
   server: text("server"),
   farm: integer("farm"),
@@ -125,7 +126,7 @@ export const image = pgTable("Image", {
     .defaultNow()
     .notNull(),
   updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
-  productId: text("productId").references(() => product.id, {
+  productId: uuid("productId").references(() => product.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
@@ -134,7 +135,7 @@ export const image = pgTable("Image", {
 export const user = pgTable(
   "User",
   {
-    id: text("id").notNull(),
+    id: uuid("id").primaryKey(),
     createdAt: timestamp("createdAt", { precision: 3, mode: "string" })
       .defaultNow()
       .notNull(),

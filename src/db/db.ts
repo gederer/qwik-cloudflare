@@ -1,15 +1,25 @@
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import Pool from "pg-pool";
 
-import { connect } from '@planetscale/database';
-import { users } from './schema';
-
-// create the connection
-const connection = connect({
-  host: process.env['DATABASE_HOST'],
-  username: process.env['DATABASE_USERNAME'],
-  password: process.env['DATABASE_PASSWORD'],
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
-const db = drizzle(connection);
+const db = drizzle(pool);
 
-const allUsers = await db.select().from(users);
+export default db;
+
+// import { drizzle } from "drizzle-orm/planetscale-serverless";
+// import { connect } from "@planetscale/database";
+
+// // create the connection
+// const connection = connect({
+//   host: process.env["MYSQL_HOSTNAME"],
+//   username: process.env["MYSQL_USERNAME"],
+//   password: process.env["MYSQL_PASSWORD"],
+// });
+
+// export const db = drizzle(connection);
+
+// // const allUsers = await db.select().from(user);
